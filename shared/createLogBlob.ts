@@ -1,25 +1,24 @@
-import { Aborter, BlobURL, BlockBlobURL, ContainerURL, ServiceURL, StorageURL, SharedKeyCredential } from "@azure/storage-blob";
+import {
+    StorageSharedKeyCredential,
+    BlobServiceClient,
+} from "@azure/storage-blob";
 
-async function createLogBlob(storageAccount, storageKey, logStorageContainer, logObject)
+async function createLogBlob(storageAccount, storageKey, containerName, logObject)
 {
-    const blobSharedKeyCredential = new SharedKeyCredential(storageAccount, storageKey);
-    const blobPipeline = StorageURL.newPipeline(blobSharedKeyCredential);
-    const blobServiceURL = new ServiceURL(
+    const blobSharedKeyCredential = new StorageSharedKeyCredential(storageAccount, storageKey);
+    const blobServiceClient = new BlobServiceClient(
         `https://${storageAccount}.blob.core.windows.net`,
-        blobPipeline
+        blobSharedKeyCredential
     );
-    const logContainerURL = ContainerURL.fromServiceURL(blobServiceURL, logStorageContainer);
-    const logBlobName = logObject.id + '.json';
-    const logBlobURL = BlobURL.fromContainerURL(logContainerURL, logBlobName);
-    const logBlockBlobURL = BlockBlobURL.fromBlobURL(logBlobURL);
+    const containerClient = blobServiceClient.getContainerClient(containerName);
 
-    const logUploadBlobResponse = await logBlockBlobURL.upload(
-        Aborter.none,
-        JSON.stringify(logObject),
-        JSON.stringify(logObject).length
-    );
+    const blobContent = JSON.stringify(logObject);
+    const blobName = logObject.id + '.json';
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    return `Results logged to ${logBlobName}`;
+    const uploadBlobResponse = await blockBlobClient.upload(blobContent, blobContent.length);
+
+    return uploadBlobResponse;
 }
 
 export { createLogBlob };
