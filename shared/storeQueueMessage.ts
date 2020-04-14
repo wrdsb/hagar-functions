@@ -3,7 +3,7 @@ import {
     QueueServiceClient
 } from "@azure/storage-queue";
 
-async function createQueueMessage(storageAccount, storageKey, queueName, queueMessage)
+async function storeQueueMessage(storageAccount, storageKey, queueName, queueMessage)
 {
     const queueSharedKeyCredential = new StorageSharedKeyCredential(storageAccount, storageKey);
     const queueServiceClient = new QueueServiceClient(
@@ -17,4 +17,4 @@ async function createQueueMessage(storageAccount, storageKey, queueName, queueMe
     return sendMessageResponse;
 }
 
-export { createQueueMessage };
+export { storeQueueMessage };

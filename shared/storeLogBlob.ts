@@ -3,7 +3,7 @@ import {
     BlobServiceClient,
 } from "@azure/storage-blob";
 
-async function createLogBlob(storageAccount, storageKey, containerName, logObject)
+async function storeLogBlob(storageAccount, storageKey, containerName, logObject)
 {
     const blobSharedKeyCredential = new StorageSharedKeyCredential(storageAccount, storageKey);
     const blobServiceClient = new BlobServiceClient(
@@ -21,4 +21,4 @@ async function createLogBlob(storageAccount, storageKey, containerName, logObjec
     return uploadBlobResponse;
 }
 
-export { createLogBlob };
+export { storeLogBlob };
