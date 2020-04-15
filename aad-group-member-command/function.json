@@ -13,6 +13,20 @@
             "type": "http",
             "direction": "out",
             "name": "res"
+        },
+        {
+            "name": "callbackMessage",
+            "type": "queue",
+            "queueName": "callbacks",
+            "connection": "wrdsbhagar_STORAGE",
+            "direction": "out"
+        },
+        {
+            "name": "flynnEvent",
+            "type": "queue",
+            "queueName": "event-emitter",
+            "connection": "wrdsbhagar_STORAGE",
+            "direction": "out"
         }
     ],
     "scriptFile": "../dist/aad-group-member-command/index.js"
