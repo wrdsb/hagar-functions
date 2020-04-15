@@ -33,9 +33,6 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     let result;
 
-    let statusCode;
-    let statusMessage;
-
     switch (operation) {
         case 'create':
             result = await queueCreate(payload);
@@ -94,7 +91,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
         let status = {
             code: 202,
-            statusMessage: 'Success: Marked record deleted.'
+            statusMessage: 'Success: Group created.'
         }
 
         const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
@@ -107,7 +104,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
         let status = {
             code: 202,
-            statusMessage: 'Success: Patched record.'
+            statusMessage: 'Success: Group patched.'
         }
 
         const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
@@ -120,7 +117,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
         let status = {
             code: 202,
-            statusMessage: 'Success: Replaced record.'
+            statusMessage: 'Success: Group replaced.'
         }
 
         const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
@@ -133,7 +130,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
         let status = {
             code: 202,
-            statusMessage: 'Success: Materialized record.'
+            statusMessage: 'Success: Group deleted.'
         }
 
         const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
