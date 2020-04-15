@@ -79,7 +79,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queueGet(payload) {
         const queueName = 'aad-group-member-get';
-        const queueMessage = '';
+        const queueMessage = 'aad-group-member-get';
 
         let status = {
             code: 202,
@@ -92,7 +92,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queueList(payload) {
         const queueName = 'aad-group-members-list';
-        const queueMessage = '';
+        const queueMessage = 'aad-group-members-list';
 
         let status = {
             code: 202,

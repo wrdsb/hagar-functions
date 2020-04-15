@@ -87,7 +87,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queueCreate(payload) {
         const queueName = 'aad-group-create';
-        const queueMessage = '';
+        const queueMessage = 'aad-group-create';
 
         let status = {
             code: 202,
@@ -100,7 +100,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queuePatch(payload) {
         const queueName = 'aad-group-update';
-        const queueMessage = '';
+        const queueMessage = 'aad-group-update';
 
         let status = {
             code: 202,
@@ -113,7 +113,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queueReplace(payload) {
         const queueName = 'add-group-update';
-        const queueMessage = '';
+        const queueMessage = 'add-group-update';
 
         let status = {
             code: 202,
@@ -126,7 +126,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     async function queueDelete(payload) {
         const queueName = 'aad-group-delete';
-        const queueMessage = '';
+        const queueMessage = 'aad-group-delete';
 
         let status = {
             code: 202,
