@@ -3,7 +3,6 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
-import { storeQueueMessage } from "../shared/storeQueueMessage";
 
 const aadGroupCommand: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -35,24 +34,22 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     switch (operation) {
         case 'get':
-            result = await queueGet(payload);
+            result = queueGet(payload);
             context.log(result);
             break;
         case 'list':
-            result = await queueList(payload);
+            result = queueList(payload);
             context.log(result);
             break;
         case 'delta':
-            result = await queueDelta(payload);
+            result = queueDelta(payload);
             context.log(result);
             break;
         default:
             break;
     }
 
-    context.bindings.recordOut = result.newRecord;
-
-    const logPayload = result.event;
+    const logPayload = result;
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
@@ -81,7 +78,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
     context.done(null, logBlob);
 
 
-    async function queueGet(payload) {
+    function queueGet(payload) {
         const queueName = 'aad-group-get';
         const queueMessage = 'aad-group-get';
 
@@ -90,11 +87,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Got group.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupGet = queueMessage;
+        return queueMessage;
     }
 
-    async function queueList(payload) {
+    function queueList(payload) {
         const queueName = 'aad-groups-list';
         const queueMessage = 'aad-groups-list';
 
@@ -103,11 +100,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Listed groups.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupsList = queueMessage;
+        return queueMessage;
     }
 
-    async function queueDelta(payload) {
+    function queueDelta(payload) {
         const queueName = 'add-group-delta';
         const queueMessage = 'add-group-delta';
 
@@ -116,8 +113,8 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Got groups delta.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.addGroupDelta = queueMessage;
+        return queueMessage;
     }
 
 };

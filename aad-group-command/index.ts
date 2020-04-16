@@ -3,7 +3,6 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
-import { storeQueueMessage } from "../shared/storeQueueMessage";
 
 const aadGroupCommand: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -35,28 +34,26 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     switch (operation) {
         case 'create':
-            result = await queueCreate(payload);
+            result = queueCreate(payload);
             context.log(result);
             break;
         case 'patch':
-            result = await queuePatch(payload);
+            result = queuePatch(payload);
             context.log(result);
             break;
         case 'replace':
-            result = await queueReplace(payload);
+            result = queueReplace(payload);
             context.log(result);
             break;
         case 'delete':
-            result = await queueDelete(payload);
+            result = queueDelete(payload);
             context.log(result);
             break;
         default:
             break;
     }
 
-    context.bindings.recordOut = result.newRecord;
-
-    const logPayload = result.event;
+    const logPayload = result;
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
@@ -85,20 +82,20 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
     context.done(null, logBlob);
 
 
-    async function queueCreate(payload) {
+    function queueCreate(payload) {
         const queueName = 'aad-group-create';
-        const queueMessage = 'aad-group-create';
+        const queueMessage = {payload: "aad-group-create"};
 
         let status = {
             code: 202,
             statusMessage: 'Success: Group created.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupCreate = queueMessage;
+        return queueMessage;
     }
 
-    async function queuePatch(payload) {
+    function queuePatch(payload) {
         const queueName = 'aad-group-update';
         const queueMessage = 'aad-group-update';
 
@@ -107,11 +104,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Group patched.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupUpdate = queueMessage;
+        return queueMessage;
     }
 
-    async function queueReplace(payload) {
+    function queueReplace(payload) {
         const queueName = 'add-group-update';
         const queueMessage = 'add-group-update';
 
@@ -120,11 +117,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Group replaced.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupUpdate = queueMessage;
+        return queueMessage;
     }
 
-    async function queueDelete(payload) {
+    function queueDelete(payload) {
         const queueName = 'aad-group-delete';
         const queueMessage = 'aad-group-delete';
 
@@ -133,8 +130,8 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Group deleted.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupDelete = queueMessage;
+        return queueMessage;
     }
 
 };

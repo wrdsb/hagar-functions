@@ -3,7 +3,6 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
-import { storeQueueMessage } from "../shared/storeQueueMessage";
 
 const aadGroupCommand: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -35,20 +34,18 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     switch (operation) {
         case 'get':
-            result = await queueGet(payload);
+            result = queueGet(payload);
             context.log(result);
             break;
         case 'list':
-            result = await queueList(payload);
+            result = queueList(payload);
             context.log(result);
             break;
         default:
             break;
     }
 
-    context.bindings.recordOut = result.newRecord;
-
-    const logPayload = result.event;
+    const logPayload = result;
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
@@ -77,7 +74,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
     context.done(null, logBlob);
 
 
-    async function queueGet(payload) {
+    function queueGet(payload) {
         const queueName = 'aad-group-member-get';
         const queueMessage = 'aad-group-member-get';
 
@@ -86,11 +83,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Got group member.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupMemberGet = queueMessage;
+        return queueMessage;
     }
 
-    async function queueList(payload) {
+    function queueList(payload) {
         const queueName = 'aad-group-members-list';
         const queueMessage = 'aad-group-members-list';
 
@@ -99,8 +96,8 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Listed group members.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupMembersList = queueMessage;
+        return queueMessage;
     }
 
 };

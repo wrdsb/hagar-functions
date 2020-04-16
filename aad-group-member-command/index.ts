@@ -3,7 +3,6 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
-import { storeQueueMessage } from "../shared/storeQueueMessage";
 
 const aadGroupCommand: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -35,20 +34,18 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
     switch (operation) {
         case 'add':
-            result = await queueAdd(payload);
+            result = queueAdd(payload);
             context.log(result);
             break;
         case 'remove':
-            result = await queueRemove(payload);
+            result = queueRemove(payload);
             context.log(result);
             break;
         default:
             break;
     }
 
-    context.bindings.recordOut = result.newRecord;
-
-    const logPayload = result.event;
+    const logPayload = result;
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
@@ -77,7 +74,7 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
     context.done(null, logBlob);
 
 
-    async function queueAdd(payload) {
+    function queueAdd(payload) {
         const queueName = 'aad-group-member-add';
         const queueMessage = 'aad-group-member-add';
 
@@ -86,11 +83,11 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Group member added.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupMemberAdd = queueMessage;
+        return queueMessage;
     }
 
-    async function queueRemove(payload) {
+    function queueRemove(payload) {
         const queueName = 'aad-group-member-remove';
         const queueMessage = 'aad-group-member-remove';
 
@@ -99,8 +96,8 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
             statusMessage: 'Success: Group member removed.'
         }
 
-        const result = await storeQueueMessage(queueStorageAccount, queueStorageKey, queueName, queueMessage);
-        return result;
+        context.bindings.aadGroupMemberRemove = queueMessage;
+        return queueMessage;
     }
 
 };
