@@ -1,8 +1,10 @@
 import { AzureFunction, Context } from "@azure/functions"
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
+import { apiConfig } from "../shared/apiConfig";
 
 const aadGroupGet: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -23,15 +25,19 @@ const aadGroupGet: AzureFunction = async function (context: Context, triggerMess
         "hagar", 
     ];
 
+    const apiToken = "Bearer " + context.bindings.graphToken;
+    apiConfig.headers.common.Authorization = apiToken;
+   
     const triggerObject = triggerMessage;
-
     const payload = triggerObject.payload;
 
-    let result = {
-        event: payload
-    };
+    const apiEndpoint = "/groups/" + payload;
 
-    const logPayload = result.event;
+    const apiClient = axios.create(apiConfig);
+    let result = await apiClient.get(apiEndpoint);
+
+    const logPayload = result.data;
+    context.log(logPayload);
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
