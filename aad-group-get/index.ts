@@ -1,9 +1,9 @@
-import { AzureFunction, Context } from "@azure/functions"
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { AzureFunction, Context } from "@azure/functions";
 import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
+import { MSGraphGroupsAPI } from "../shared/groupsAPI";
 import { apiConfig } from "../shared/apiConfig";
 
 const aadGroupGet: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
@@ -25,18 +25,17 @@ const aadGroupGet: AzureFunction = async function (context: Context, triggerMess
         "hagar", 
     ];
 
-    const apiToken = "Bearer " + context.bindings.graphToken;
-    apiConfig.headers.common.Authorization = apiToken;
-   
     const triggerObject = triggerMessage;
     const payload = triggerObject.payload;
 
-    const apiEndpoint = "/groups/" + payload;
+    const apiToken = "Bearer " + context.bindings.graphToken;
+    apiConfig.headers.common.Authorization = apiToken;
 
-    const apiClient = axios.create(apiConfig);
-    let result = await apiClient.get(apiEndpoint);
+    const apiClient = new MSGraphGroupsAPI(apiConfig);
 
-    const logPayload = result.data;
+    let result = await apiClient.get(payload);
+
+    const logPayload = result;
     context.log(logPayload);
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
