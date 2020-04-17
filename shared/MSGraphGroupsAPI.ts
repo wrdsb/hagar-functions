@@ -1,6 +1,6 @@
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { Group } from "@microsoft/microsoft-graph-types";
-import { msGraphAPI } from "./graphAPI";
+import { msGraphAPI } from "./msGraphAPI";
 import { apiConfig } from "./apiConfig";
 import { ServerError } from "./serverError";
 

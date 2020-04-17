@@ -3,8 +3,7 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
-import { MSGraphGroupsAPI } from "../shared/groupsAPI";
-import { apiConfig } from "../shared/apiConfig";
+import { MSGraphGroupsAPI } from "../shared/MSGraphGroupsAPI";
 
 const aadGroupGet: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
