@@ -1,14 +1,16 @@
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { Group } from "@microsoft/microsoft-graph-types";
 import { msGraphAPI } from "./graphAPI";
+import { apiConfig } from "./apiConfig";
 import { ServerError } from "./serverError";
 
 export class MSGraphGroupsAPI {
-    private apiConfig;
+    private apiConfig: AxiosRequestConfig;
     private api: msGraphAPI;
 
-    public constructor (apiConfig: AxiosRequestConfig) {
+    public constructor (apiToken: string ) {
         this.apiConfig = apiConfig;
+        this.apiConfig.headers.common.Authorization = apiToken;
         this.api = new msGraphAPI(this.apiConfig);
     }
 
