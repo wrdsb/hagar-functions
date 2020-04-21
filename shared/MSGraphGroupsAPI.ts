@@ -84,7 +84,6 @@ export class MSGraphGroupsAPI {
                 const axiosError = err as AxiosError<ServerError>
                 return axiosError.response.data;
             }
-              
             throw err;
         }
     }
