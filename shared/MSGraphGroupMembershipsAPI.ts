@@ -16,9 +16,9 @@ export class MSGraphGroupMembershipsAPI {
     }
 
     // GET /groups/{id}/members
-    public async list(id: string): Promise<DirectoryObject[] | ServerError> {
+    public async list(groupID: string): Promise<DirectoryObject[] | ServerError> {
         try {
-            const response = await this.api.get<DirectoryObject[]>(`/groups/${id}/members`);
+            const response = await this.api.get<DirectoryObject[]>(`/groups/${groupID}/members`);
             const data = response.data;
             return data;
         } catch (err) {
@@ -46,9 +46,9 @@ export class MSGraphGroupMembershipsAPI {
     // }
     
     // POST /groups/{id}/members/$ref
-    public async add(group: Group, directoryObject: DirectoryObject): Promise<boolean | ServerError> {
+    public async add(groupID: string, directoryObject: DirectoryObject): Promise<boolean | ServerError> {
         try {
-            const response = await this.api.post(`/groups/${group.id}/members/$ref`, JSON.stringify(directoryObject));
+            const response = await this.api.post(`/groups/${groupID}/members/$ref`, JSON.stringify(directoryObject));
             return true;
         } catch (err) {
             if (err && err.response) {
@@ -60,9 +60,9 @@ export class MSGraphGroupMembershipsAPI {
     }
     
     // DELETE /groups/{id}/members/{id}/$ref
-    public async remove(group: Group, directoryObject: DirectoryObject): Promise<boolean | ServerError> {
+    public async remove(groupID: string, directoryObject: DirectoryObject): Promise<boolean | ServerError> {
         try {
-            const response = await this.api.delete(`/groups/${group.id}/members/${directoryObject.id}/$ref`);
+            const response = await this.api.delete(`/groups/${groupID}/members/${directoryObject.id}/$ref`);
             return true;
         } catch (err) {
             if (err && err.response) {

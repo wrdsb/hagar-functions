@@ -3,6 +3,7 @@ import { createLogObject } from "../shared/createLogObject";
 import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
+import { MSGraphGroupMembershipsAPI } from "../shared/MSGraphGroupMembershipsAPI";
 
 const aadGroupGet: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
@@ -24,14 +25,15 @@ const aadGroupGet: AzureFunction = async function (context: Context, triggerMess
     ];
 
     const triggerObject = triggerMessage;
-
     const payload = triggerObject.payload;
 
-    let result = {
-        event: payload
-    };
+    const apiToken = "Bearer " + context.bindings.graphToken;
+    const apiClient = new MSGraphGroupMembershipsAPI(apiToken);
 
-    const logPayload = result.event;
+    let result = await apiClient.list(payload.groupID);
+
+    const logPayload = result;
+    context.log(logPayload);
 
     const logObject = await createLogObject(functionInvocationID, functionInvocationTime, functionName, logPayload);
     const logBlob = await storeLogBlob(logStorageAccount, logStorageKey, logStorageContainer, logObject);
