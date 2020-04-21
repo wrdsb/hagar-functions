@@ -4,7 +4,7 @@ import { storeLogBlob } from "../shared/storeLogBlob";
 import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
 
-const aadGroupCommand: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
+const aadGroupQuery: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
     const functionInvocationTime = new Date();
     const functionInvocationTimestamp = functionInvocationTime.toJSON();  // format: 2012-04-23T18:25:43.511Z
@@ -119,4 +119,4 @@ const aadGroupCommand: AzureFunction = async function (context: Context, req: Ht
 
 };
 
-export default aadGroupCommand;
+export default aadGroupQuery;
