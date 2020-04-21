@@ -3,7 +3,7 @@
         {
             "name": "triggerMessage",
             "type": "queueTrigger",
-            "queueName": "aad-group-delta",
+            "queueName": "aad-groups-delta",
             "connection": "wrdsbhagar_STORAGE",
             "direction": "in"
         },
@@ -31,5 +31,5 @@
 
     ],
     "disabled": false,
-    "scriptFile": "../dist/aad-group-delta/index.js"
+    "scriptFile": "../dist/aad-groups-delta/index.js"
 }

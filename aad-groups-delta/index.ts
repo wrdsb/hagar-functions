@@ -5,7 +5,7 @@ import { createCallbackMessage } from "../shared/createCallbackMessage";
 import { createEvent } from "../shared/createEvent";
 import { MSGraphGroupsAPI } from "../shared/MSGraphGroupsAPI";
 
-const aadGroupGet: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
+const aadGroupsDelta: AzureFunction = async function (context: Context, triggerMessage: any): Promise<void> {
     const functionInvocationID = context.executionContext.invocationId;
     const functionInvocationTime = new Date();
     const functionInvocationTimestamp = functionInvocationTime.toJSON();  // format: 2012-04-23T18:25:43.511Z
@@ -17,7 +17,7 @@ const aadGroupGet: AzureFunction = async function (context: Context, triggerMess
 
     const logStorageAccount = process.env['storageAccount'];
     const logStorageKey = process.env['storageKey'];
-    const logStorageContainer = 'function-aad-group-delta-logs';
+    const logStorageContainer = 'function-aad-groups-delta-logs';
 
     const eventLabel = '';
     const eventTags = [
@@ -62,4 +62,4 @@ const aadGroupGet: AzureFunction = async function (context: Context, triggerMess
     context.done(null, logBlob);
 };
 
-export default aadGroupGet;
+export default aadGroupsDelta;
